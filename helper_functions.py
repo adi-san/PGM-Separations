@@ -44,3 +44,34 @@ def compute_recov_aq_arr(C_arr,n_stages):
 def compute_Rh_purity_aq(C_arr):
   Rh_purity_aq=C_arr[-1,2]/np.sum(C_arr[-1,:])*100
   return Rh_purity_aq
+
+def countercurrent_model(C_stages_1_to_n: ndarray, C_lig: float, Q_aq: float, Q_org: float,n_stages: int, q_in: ndarray,C_in: ndarray,q_max: ndarray,K_eq: ndarray):
+  func_value=np.zeros(len(C_stages_1_to_n))
+
+  # the below MUST be an integer
+  n_comps=int(len(C_stages_1_to_n)/n_stages)
+  scale_factor=10**0
+  for i in range(n_stages):
+    if i==0:
+      func_value[0:n_comps]=(Q_aq*C_in+Q_org*C_lig*q_func_langmuir_relation(q_max, K_eq, C_stages_1_to_n[n_comps:2*n_comps])-Q_aq*C_stages_1_to_n[0:n_comps]-Q_org*C_lig*q_func_langmuir_relation(q_max, K_eq, C_stages_1_to_n[0:n_comps]))*scale_factor
+      dummy_4_scale=func_value[n_comps-1].copy()
+      func_value[n_comps-1]=dummy_4_scale/q_max[-1]
+      # print(67)
+    # else if we are on the last stage (recall that the indices are )
+    elif i==n_stages-1:
+      func_value[n_comps*(n_stages-1):n_comps*n_stages]=(Q_aq*C_stages_1_to_n[n_comps*(n_stages-2):n_comps*(n_stages-1)]
+      +Q_org*C_lig*q_in
+      -Q_aq*C_stages_1_to_n[n_comps*(n_stages-1):n_comps*n_stages]
+      -Q_org*C_lig*q_func_langmuir_relation(q_max, K_eq, C_stages_1_to_n[n_comps*(n_stages-1):n_comps*(n_stages)]))*scale_factor
+      dummy_4_scale=func_value[-1].copy()
+      func_value[-1]=dummy_4_scale/q_max[-1]
+    else:
+      # suppose this is stage 2 for shits and giggles lol, so i=1
+      # suppose this is stage 3 for shits and giggles lol, so i=2
+      func_value[n_comps*(i):n_comps*(i+1)]=(Q_aq*C_stages_1_to_n[n_comps*(i-1):n_comps*(i)]
+      +Q_org*C_lig*q_func_langmuir_relation(q_max, K_eq, C_stages_1_to_n[n_comps*(i+1):n_comps*(i+2)])
+      -Q_aq*C_stages_1_to_n[n_comps*(i):n_comps*(i+1)]
+      -Q_org*C_lig*q_func_langmuir_relation(q_max, K_eq, C_stages_1_to_n[n_comps*(i):n_comps*(i+1)]))*scale_factor
+      dummy_4_scale=func_value[n_comps*(i+1)-1].copy()
+      func_value[n_comps*(i+1)-1]=dummy_4_scale/q_max[-1]
+  return func_value
