@@ -47,7 +47,6 @@ for n_stages_float in n_stages_arr:
     print(f'Warning: The solution for n_stages={n_stages} and Q_org={Q_org_det} may not have converged properly, as the l2 norm of the objective function is greater than 1e-8.')
   C_countercurrent_mat=C_countercurrent_concs.reshape(int(len(C_countercurrent_concs)/int(len(C_in))),int(len(C_in)))
   C_counter_plot=np.vstack((C_in,C_countercurrent_mat))
-
   recov_aq_arr=compute_recov_aq_arr(C_counter_plot,n_stages)
   Rh_recov=recov_aq_arr[-1,2]
   max_recov_list.append(Rh_recov)
@@ -57,18 +56,16 @@ print('Done with all simulations!')
 max_recov_arr=np.array(max_recov_list)
 vol_flow_arr=np.array(vol_flow_list)
 #   solve the countercurrent model with the determined organic flow rate to get the recovery and purity values, which we can then plot to verify that we are indeed achieving the desired purity value and to see how the recovery changes with number of stages at the point of achieving the desired purity value. We can also plot the relationship between number of stages and required organic flow rate to achieve the desired purity value.
-
 fig, ax1 = plt.subplots()
-
   # Recovery (left y-axis)
-ax1.plot(n_stages_arr, max_recov_arr, color='tab:blue', label='Max Recovery')
+ax1.plot(n_stages_arr, max_recov_arr, linestyle='--', marker='v',color='tab:blue', label='Max Recovery')
 ax1.set_xlabel('Stages in Countercurrent Operation')
 ax1.set_ylabel('Max Recovery (%)', color='tab:blue')
 ax1.tick_params(axis='y', labelcolor='tab:blue')
 
   # Purity (right y-axis)
 ax2 = ax1.twinx()
-ax2.plot(n_stages_arr, vol_flow_arr, color='tab:red', label='Organic Flowrate')
+ax2.plot(n_stages_arr, vol_flow_arr, linestyle='--', marker='v',color='tab:red', label='Organic Flowrate')
 # ax2.plot(test_flowrates, np.ones(len(test_flowrates))*95, color='tab:red',linestyle='--', label='Purity Threshold')
 ax2.set_ylabel('Vol Flow Solution (L/time)', color='tab:red')
 ax2.tick_params(axis='y', labelcolor='tab:red')
@@ -82,12 +79,7 @@ plt.title('Recovery at 95% Purity and Organic Flow Vs Stage Number')
 plt.tight_layout()
 plt.show()
 
-
-
-
-
-  # use the previous solution as the new guess, but scaled down by 10% to hopefully ensure that we approach the solution from the same direction each time and thus get a more monotonic relationship between number of stages and required organic flow rate
-
+#   use the previous solution as the new guess, but scaled down by 10% to hopefully ensure that we approach the solution from the same direction each time and thus get a more monotonic relationship between number of stages and required organic flow rate
 #   C_arr, q_arr = crosscurrent_model_fsolve(C_in, q_in, C_lig, Q_aq, Q_org_det, n_stages,q_max_arr,K_Eq_arr)
 #   recov_aq_arr=compute_recov_aq_arr(C_arr,n_stages)
 #   Rh_recov=recov_aq_arr[-1,2]
