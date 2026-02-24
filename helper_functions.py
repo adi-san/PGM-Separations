@@ -3,6 +3,7 @@ from scipy.optimize import fsolve
 from numpy import ndarray
 import matplotlib.pyplot as plt
 from scipy.optimize import least_squares, minimize, Bounds, LinearConstraint, NonlinearConstraint
+import pandas as pd
 # I want to solve for outlet conc
 def denom_fcn(K_eq_arr: ndarray, C_arr: ndarray):
   return 1+np.dot(K_eq_arr,C_arr)
