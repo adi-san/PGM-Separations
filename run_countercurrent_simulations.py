@@ -4,12 +4,12 @@ from helper_functions import *
 col_labels = ['Pt', 'Pd', 'Rh']
 
 q_in=np.array([0,0,0])
-total_conc=0.005 #units=M
+total_conc=0.02 #units=M
 C_in=np.array([.45, .45, .1])*total_conc
-n_stages=6
+n_stages=3
 Q_aq=1 # L/time
 C_lig=0.1 #mols of ligand/L solution
-Q_org=0.19
+Q_org=0.7
 
 eps=1e-11
 
@@ -18,18 +18,14 @@ K_Eq_arr = np.array([1822.14319447879,2662.60543887326, 2401.64491456341]) # tru
 
 # low_b=np.zeros(len(C_in)*n_stages)
 low_b = np.zeros(len(C_in)*n_stages)
-# low_b=[0.0]*len(C_in)*n_stages
-# inf_ub=np.array([np.inf,np.inf,np.inf], dtype=float)
 up_b=np.ones(len(C_in)*n_stages)*np.inf
-# up_b=up_b.tolist()
-# print(up_b)
 
-# n_comps=len(C_in)
 C_arr_cross, q_arr_cross = crosscurrent_model_fsolve(C_in, q_in, C_lig, Q_aq, Q_org, n_stages,q_max_arr,K_Eq_arr)
 C_arr_cross_minus_in=C_arr_cross[1:,:]
 C_counter_ig=C_arr_cross_minus_in.flatten()
 
 # print(type(low_b[0]))
+
 opt_bounds = (low_b, up_b)
 
 # print(C_arr_cross)
@@ -94,3 +90,4 @@ plt.title('Fractional Coverage Vs Stages')
 plt.xlabel("Stage Number")
 plt.ylabel("Fractional Coverage")
 plt.show()
+# print()
