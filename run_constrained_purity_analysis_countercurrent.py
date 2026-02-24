@@ -14,8 +14,8 @@ highest_stage=15
 # the best number of stages is between 3 and 67
 n_stages_arr=np.linspace(starting_stage,highest_stage,highest_stage-starting_stage+1)
 
-lower_bounds = np.array([0.05])
-upper_bounds = np.array([2.0])
+# lower_bounds = np.array([0.05])
+# upper_bounds = np.array([2.0])
 # bounds = Bounds(lower_bounds, upper_bounds)
 
 # specify this
