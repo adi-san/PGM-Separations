@@ -9,23 +9,19 @@ C_in=np.array([.45, .45, .1])*total_conc
 Q_aq=1 # L/time
 C_lig=0.1 #mols of ligand/L solution
 
-starting_stage=2
-highest_stage=15
+starting_stage=3
+highest_stage=10
 # the best number of stages is between 3 and 67
 n_stages_arr=np.linspace(starting_stage,highest_stage,highest_stage-starting_stage+1)
 
-# lower_bounds = np.array([0.05])
-# upper_bounds = np.array([2.0])
-# bounds = Bounds(lower_bounds, upper_bounds)
-
 # specify this
-desired_purity_Rh=95
+desired_purity_Rh=99.9 # in percent, so 95 means 95% purity of Rh in the aqueous phase
 
 
 max_recov_list=[]
 vol_flow_list=[]
 
-Q_org_ig=0.4
+Q_org_ig=3
 
 
 
@@ -51,7 +47,12 @@ for n_stages_float in n_stages_arr:
   Rh_recov=recov_aq_arr[-1,2]
   max_recov_list.append(Rh_recov)
   vol_flow_list.append(Q_org_det)
-  Q_org_ig=Q_org_det
+  if n_stages==2:
+    Q_org_ig=Q_org_det/2
+  elif n_stages==3:
+    Q_org_ig=Q_org_det/1.5
+  else:
+    Q_org_ig=Q_org_det
 print('Done with all simulations!')
 max_recov_arr=np.array(max_recov_list)
 vol_flow_arr=np.array(vol_flow_list)
@@ -74,7 +75,7 @@ ax2.tick_params(axis='y', labelcolor='tab:red')
 lines = ax1.get_lines() + ax2.get_lines()
 labels: list[str] = [str(line.get_label()) for line in lines]
 ax1.legend(lines, labels, loc='center right')
-plt.title('Recovery at 95% Purity and Organic Flow Vs Stage Number')
+plt.title('Recovery at '+str(desired_purity_Rh)+'% Purity and Organic Flow Vs Stage Number')
 
 plt.tight_layout()
 plt.show()

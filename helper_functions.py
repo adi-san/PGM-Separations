@@ -90,5 +90,5 @@ def Rh_purity_resid_fcn_countercurrent(Q_org, C_lig, Q_aq,n_stages, q_in,C_in,q_
     print(f'Warning: The solution for Q_org={Q_org} may not have converged properly, as the l2 norm of the objective function is greater than 1e-6.')
   C_arr=C_arr.reshape(int(len(C_arr)/int(len(C_in))),int(len(C_in)))
   Rh_purity_aq=compute_Rh_purity_aq(C_arr)
-  rel_resid=abs(Rh_purity_aq-purity_threshold)/purity_threshold
+  rel_resid=abs(Rh_purity_aq-purity_threshold)
   return rel_resid
