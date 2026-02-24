@@ -4,6 +4,8 @@ from numpy import ndarray
 import matplotlib.pyplot as plt
 from scipy.optimize import least_squares, minimize, Bounds, LinearConstraint, NonlinearConstraint
 import pandas as pd
+
+from recovery_purity_tradeoff_analysis_countercurrent import C_in
 # I want to solve for outlet conc
 def denom_fcn(K_eq_arr: ndarray, C_arr: ndarray):
   return 1+np.dot(K_eq_arr,C_arr)
@@ -75,3 +77,17 @@ def countercurrent_model(C_stages_1_to_n: ndarray, C_lig: float, Q_aq: float, Q_
       dummy_4_scale=func_value[n_comps*(i+1)-1].copy()
       func_value[n_comps*(i+1)-1]=dummy_4_scale/q_max[-1]
   return func_value
+
+def Rh_purity_resid_fcn_countercurrent(Q_org, C_lig, Q_aq,n_stages, q_in,C_in,q_max,K_eq,purity_threshold):
+  low_b = np.zeros(len(C_in)*n_stages)
+  up_b=np.ones(len(C_in)*n_stages)*np.inf
+  opt_bounds = (low_b, up_b)
+  C_stages_1_to_n_guess=np.tile(C_in,n_stages)
+  C_arr=least_squares(countercurrent_model, C_stages_1_to_n_guess, args=(C_lig, Q_aq, Q_org,n_stages, q_in,C_in,q_max,K_eq), ftol=1e-11, gtol=1e-11, xtol=1e-11,bounds=opt_bounds, method='trf')
+  C_arr=C_arr.x
+  if np.linalg.norm(countercurrent_model(C_arr, C_lig, Q_aq, Q_org,n_stages, q_in,C_in,q_max,K_eq))>1e-8:
+    print(f'Warning: The solution for Q_org={Q_org} may not have converged properly, as the l2 norm of the objective function is greater than 1e-8.')
+  C_arr=C_arr.reshape(int(len(C_arr)/int(len(C_in))),int(len(C_in)))
+  Rh_purity_aq=compute_Rh_purity_aq(C_arr)
+  rel_resid=abs(Rh_purity_aq-purity_threshold)/purity_threshold
+  return rel_resid
