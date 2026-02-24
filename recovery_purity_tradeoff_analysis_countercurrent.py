@@ -2,7 +2,7 @@ from helper_functions import *
 # from run_countercurrent_simulations import K_Eq_arr, q_max_arr, C_in, q_in, C_lig, Q_aq, test_flowrates
 
 
-n_stages_arr=np.array([2,3,5,6,7,9])
+n_stages_arr=np.array([2,3,6,7,9])
 q_in=np.array([0,0,0])
 total_conc=0.005 #units=M
 C_in=np.array([.45, .45, .1])*total_conc
