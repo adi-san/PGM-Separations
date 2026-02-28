@@ -13,6 +13,14 @@ def q_func_langmuir_relation(q_max_arr: ndarray, K_eq_arr: ndarray, C_arr: ndarr
   denom=denom_fcn(K_eq_arr,C_arr)
   q_arr=q_max_arr*K_eq_arr*C_arr/denom
   return q_arr
+def ppm_mass_tot_to_M_concs(ppm_mass_tot: float ,rel_mol_frac_arr: ndarray,MW_arr: ndarray):
+  # use basis of 1 mol (i.e. rel mol frac --> x_i mol for calculation purposes)
+  dummy_mass_arr=rel_mol_frac_arr*MW_arr
+  dummy_mass_tot=np.sum(dummy_mass_arr)
+  rel_mass_frac_arr=dummy_mass_arr/dummy_mass_tot
+  rel_mass_conc_arr= rel_mass_frac_arr*ppm_mass_tot/1000 #g/L
+  M_concs=rel_mass_conc_arr/MW_arr
+  return M_concs
 # print(q_func_langmuir_relation(q_max_arr,K_Eq_arr,a))
 # C_out is what we want to solve for. C_lig, Q_aq, Q_org are scalars that do not change
 def mat_bal_func_stage(C_out: ndarray, C_lig: float, Q_aq: float, Q_org: float, q_in: ndarray,C_in: ndarray,q_max: ndarray,K_eq: ndarray):

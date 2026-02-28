@@ -4,8 +4,12 @@ q_max_arr = np.array([0.283186498156831,0.569456410590181,0.00376984198947194]) 
 K_Eq_arr = np.array([1822.14319447879,2662.60543887326, 2401.64491456341]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky
 
 q_in=np.array([0,0,0])
-total_conc=0.02 #units=M
-C_in=np.array([.45, .45, .1])*total_conc
+
+total_conc_ppm_mass=2000 # mg/L
+rel_mol_frac_arr=np.array([.45, .45, .1]) #Pt, Pd, Rh
+MW_arr=np.array([195.084,106.42,102.91])
+C_in=ppm_mass_tot_to_M_concs(total_conc_ppm_mass ,rel_mol_frac_arr,MW_arr)
+
 Q_aq=1 # L/time
 C_lig=0.1 #mols of ligand/L solution
 
@@ -15,13 +19,13 @@ highest_stage=10
 n_stages_arr=np.linspace(starting_stage,highest_stage,highest_stage-starting_stage+1)
 
 # specify this
-desired_purity_Rh=99.9 # in percent, so 95 means 95% purity of Rh in the aqueous phase
+desired_purity_Rh=95 # in percent, so 95 means 95% purity of Rh in the aqueous phase
 
 
 max_recov_list=[]
 vol_flow_list=[]
 
-Q_org_ig=3
+Q_org_ig=.3
 
 
 

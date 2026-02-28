@@ -4,8 +4,10 @@ from helper_functions import *
 
 n_stages_arr=np.array([2,3,6,7,9])
 q_in=np.array([0,0,0])
-total_conc=0.005 #units=M
-C_in=np.array([.45, .45, .1])*total_conc
+total_conc_ppm_mass=500 # mg/L
+rel_mol_frac_arr=np.array([.45, .45, .1]) #Pt, Pd, Rh
+MW_arr=np.array([195.084,106.42,102.91])
+C_in=ppm_mass_tot_to_M_concs(total_conc_ppm_mass ,rel_mol_frac_arr,MW_arr)
 
 Q_aq=1 # L/time
 C_lig=0.1 #mols of ligand/L solution

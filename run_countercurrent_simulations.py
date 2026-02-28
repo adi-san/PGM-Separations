@@ -4,8 +4,10 @@ from helper_functions import *
 col_labels = ['Pt', 'Pd', 'Rh']
 
 q_in=np.array([0,0,0])
-total_conc=0.02 #units=M
-C_in=np.array([.45, .45, .1])*total_conc
+total_conc_ppm_mass=500 # mg/L
+rel_mol_frac_arr=np.array([.45, .45, .1]) #Pt, Pd, Rh
+MW_arr=np.array([195.084,106.42,102.91])
+C_in=ppm_mass_tot_to_M_concs(total_conc_ppm_mass ,rel_mol_frac_arr,MW_arr)
 n_stages=3
 Q_aq=1 # L/time
 C_lig=0.1 #mols of ligand/L solution
@@ -24,11 +26,7 @@ C_arr_cross, q_arr_cross = crosscurrent_model_fsolve(C_in, q_in, C_lig, Q_aq, Q_
 C_arr_cross_minus_in=C_arr_cross[1:,:]
 C_counter_ig=C_arr_cross_minus_in.flatten()
 
-# print(type(low_b[0]))
-
 opt_bounds = (low_b, up_b)
-
-# print(C_arr_cross)
 
 C_countercurrent=least_squares(countercurrent_model, C_counter_ig, args=(C_lig, Q_aq, Q_org,n_stages, q_in,C_in,q_max_arr,K_Eq_arr), ftol=eps, gtol=eps, xtol=eps,bounds=opt_bounds, method='trf')
 print(C_countercurrent)
