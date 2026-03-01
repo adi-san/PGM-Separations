@@ -2,12 +2,12 @@ from helper_functions import *
 
 # this is an example of constrained analysis for a single ligand
 
-ligand='ddFc'
-q_max_arr = np.array([0.283186498156831,0.569456410590181,0.00376984198947194]) #mol PGM/mol ddFc
-# q_max_arr = np.array([0.018775015,0.104929611,0.001814625]) #mol PGM/mol coeFc
+ligand='coeFc'
+# q_max_arr = np.array([0.283186498156831,0.569456410590181,0.00376984198947194]) #mol PGM/mol ddFc
+q_max_arr = np.array([0.018775015,0.104929611,0.001814625]) #mol PGM/mol coeFc
 # q_max_arr = np.array([0.272571301,0.409453841,0.003109267]) #mol PGM/mol deFc
-K_Eq_arr = np.array([1822.14319447879,2662.60543887326, 2401.64491456341]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #ddFc
-# K_Eq_arr = np.array([285.1951444,2169.894489,866.4940906]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #coeFc
+# K_Eq_arr = np.array([1822.14319447879,2662.60543887326, 2401.64491456341]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #ddFc
+K_Eq_arr = np.array([285.1951444,2169.894489,866.4940906]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #coeFc
 # K_Eq_arr = np.array([349.540848,950.3304042, 368.9954269]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #deFc
 # j
 q_in=np.array([0,0,0])
