@@ -3,7 +3,7 @@ from helper_functions import *
 
 
 n_stages_arr=np.array([2,3,6,7,9])
-q_in=np.array([0,0,0])
+q_in=np.array([0.0,0.0,0.0])
 total_conc_ppm_mass=500 # mg/L
 rel_mol_frac_arr=np.array([.45, .45, .1]) #Pt, Pd, Rh
 MW_arr=np.array([195.084,106.42,102.91])

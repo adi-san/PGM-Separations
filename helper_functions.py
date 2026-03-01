@@ -55,6 +55,13 @@ def compute_Rh_purity_aq(C_arr):
   Rh_purity_aq=C_arr[-1,2]/np.sum(C_arr[-1,:])*100
   return Rh_purity_aq
 
+def compute_Pd_purity_aq(C_arr):
+  Pd_purity_aq=C_arr[-1,1]/np.sum(C_arr[-1,:])*100
+  return Pd_purity_aq
+def compute_Pt_purity_aq(C_arr):
+  Pt_purity_aq=C_arr[-1,0]/np.sum(C_arr[-1,:])*100
+  return Pt_purity_aq
+
 def countercurrent_model(C_stages_1_to_n: ndarray, C_lig: float, Q_aq: float, Q_org: float,n_stages: int, q_in: ndarray,C_in: ndarray,q_max: ndarray,K_eq: ndarray):
   func_value=np.zeros(len(C_stages_1_to_n))
 
@@ -100,3 +107,12 @@ def Rh_purity_resid_fcn_countercurrent(Q_org, C_lig, Q_aq,n_stages, q_in,C_in,q_
   Rh_purity_aq=compute_Rh_purity_aq(C_arr)
   rel_resid=abs(Rh_purity_aq-purity_threshold)
   return rel_resid
+
+# def run_constrained_purity_analysis_countercurrent():
+#   # from run_constrained_purity_analysis_countercurrent import C_in
+#   # from run_constrained_purity_analysis_countercurrent import q_in
+#   # from run_constrained_purity_analysis_countercurrent import C_lig
+#   # from run_constrained_purity_analysis_countercurrent import Q_aq
+#   # from run_constrained_purity_analysis_countercurrent import n_stages_arr
+#   # from run_constrained_purity_analysis_countercurrent import q_max_arr
+#   # from run_constrained_purity_analysis_countercurrent import K_Eq_arr
