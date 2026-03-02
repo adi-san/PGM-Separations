@@ -8,10 +8,10 @@ total_conc_ppm_mass=500 # mg/L
 rel_mol_frac_arr=np.array([.45, .45, .1]) #Pt, Pd, Rh
 MW_arr=np.array([195.084,106.42,102.91])
 C_in=ppm_mass_tot_to_M_concs(total_conc_ppm_mass ,rel_mol_frac_arr,MW_arr)
-n_stages=3
+n_stages=12
 Q_aq=1 # L/time
 C_lig=0.1 #mols of ligand/L solution
-Q_org=0.7
+Q_org=0.110298
 
 eps=1e-11
 
@@ -64,6 +64,7 @@ uptake_list=[q_func_langmuir_relation(q_max_arr, K_Eq_arr, C_countercurrent_conc
 uptake_mat=np.array(uptake_list).reshape(int(len(C_countercurrent_concs)/int(len(C_in))),int(len(C_in)))
 uptake_mat_df=pd.DataFrame(uptake_mat, columns=col_labels)
 uptake_mat_df.plot(linestyle='--',marker='v')
+print(uptake_mat)
 plt.title('Countercurrent Uptake Vs Stages')
 plt.xlabel("Stage Number")
 plt.ylabel("Uptake [mol PGM/mol ddFc]")
