@@ -2,8 +2,31 @@ import numpy as np
 from scipy.optimize import fsolve
 from numpy import ndarray
 import matplotlib.pyplot as plt
-from scipy.optimize import least_squares, minimize, Bounds, LinearConstraint, NonlinearConstraint
+from scipy.optimize import least_squares, minimize, Bounds, LinearConstraint, NonlinearConstraint, curve_fit
 import pandas as pd
+import openpyxl
+from scipy.stats import t
+
+# data extraction and fitting functions
+def unary_langmuir_func(x, q_max, K):
+    return q_max*K*x/(1+K*x)
+def d_langmuir_func_d_q_max(x, q_max, K):
+    return K*x/(1+K*x)
+def d_langmuir_func_d_K(x, q_max, K):
+    return q_max*x/(1+K*x)**2
+def Jac_for_data_fitting(x_data, param_arr):
+    q_max=param_arr[0]
+    K=param_arr[1]
+    Jac=np.ones((len(x_data),len(param_arr)))
+    Jac[:,0]=d_langmuir_func_d_q_max(x_data, q_max, K)
+    Jac[:,1]=d_langmuir_func_d_K(x_data, q_max, K)
+    return Jac
+def unary_langmuir_func_resid(theta_arr,x_data,y_data):
+    q_max=theta_arr[0]
+    K=theta_arr[1]
+    return y_data-unary_langmuir_func(x_data, q_max, K)
+# end data extraction and fitting functions
+
 
 # from recovery_purity_tradeoff_analysis_countercurrent import C_in
 # I want to solve for outlet conc

@@ -12,8 +12,23 @@ K_Eq_arr = np.array([285.1951444,2169.894489,866.4940906]) # truly dimensionless
 # K_Eq_arr = np.array([349.540848,950.3304042, 368.9954269]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #deFc
 
 # mol PGM/mol Fc ligand
-q_out_prev=np.array([0.139116456493971,0.140739065708699,0.000445575356925449])
-Q_org_prev=0.109524373416744
+# 0.080723826	0.08154717	0.000989039
+# 0.109202257	0.110414571	0.000724046
+# 0.125575769	0.127014015	0.000571622
+# 0.133707635	0.135257002	0.000495923
+# 0.137166002	0.138762231	0.000463731
+# 0.138458497	0.140072189	0.0004517
+# 0.138904476	0.1405242	0.000447549
+# 0.139052475	0.14067421	0.000446171
+# 0.139100786	0.140723183	0.000445721
+# 0.139116456	0.140739066	0.000445575
+
+
+
+# the 2 parameters/arrs below will need to be varied depending on what the preceding separation is
+q_out_prev=np.array([0.139116456,0.140739066,0.000445575])
+Q_org_prev=0.109524373
+
 q_in=np.array([0,0,0])
 
 total_conc_ppm_mass=500 # mg/L
@@ -160,7 +175,7 @@ result['Q_aq/(Q_org*C_lig) [1/M]']=Q_aq/(vol_flow_arr*C_lig)
 # result=result[['Stages']+Conc_in_labels+q_in_labels+Conc_out_labels+q_out_labels]
 # result=result[['Stages']+Conc_in_labels+q_in_labels+Conc_out_labels+q
 print(result)
-result.to_csv('countercurrent_constrained_purity_analysis_results_'+str(total_conc_ppm_mass)+'_ppm_'+str(PGM_labels)+'_PGMs_'+str(desired_purity_Pt)+'_percent_purity_Pt_'+str(ligand)+'_ligand.csv', index=False)
+result.to_csv('countercurrent_constrained_purity_analysis_results_'+str(total_conc_ppm_mass)+'_ppm_'+str(PGM_labels)+'_PGMs_'+str(desired_purity_Pt)+'_percent_purity_Pt_'+'_Q_org_prev_'+str(Q_org_prev)+'_'+str(ligand)+'_ligand.csv', index=False)
 # df.plot(linestyle='--',marker='v')
 
 #   use the previous solution as the new guess, but scaled down by 10% to hopefully ensure that we approach the solution from the same direction each time and thus get a more monotonic relationship between number of stages and required organic flow rate

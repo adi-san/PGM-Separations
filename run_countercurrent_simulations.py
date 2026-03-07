@@ -8,17 +8,16 @@ total_conc_ppm_mass=500 # mg/L
 rel_mol_frac_arr=np.array([.45, .45, .1]) #Pt, Pd, Rh
 MW_arr=np.array([195.084,106.42,102.91])
 C_in=ppm_mass_tot_to_M_concs(total_conc_ppm_mass ,rel_mol_frac_arr,MW_arr)
-n_stages=12
+n_stages=10
 Q_aq=1 # L/time
 C_lig=0.1 #mols of ligand/L solution
-Q_org=0.110298
+Q_org=0.6135438158309677
 
 eps=1e-11
 
-q_max_arr = np.array([0.283186498156831,0.569456410590181,0.00376984198947194]) #mol PGM/mol ddFc
-K_Eq_arr = np.array([1822.14319447879,2662.60543887326, 2401.64491456341]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky
+q_max_arr = np.array([0.283184293825222,0.56945642916197,0.00376986289722275]) #mol PGM/mol ddFc
+K_Eq_arr = np.array([1822.21079088769,2662.60590731049, 2401.50309384427]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #ddFc
 
-# low_b=np.zeros(len(C_in)*n_stages)
 low_b = np.zeros(len(C_in)*n_stages)
 up_b=np.ones(len(C_in)*n_stages)*np.inf
 
