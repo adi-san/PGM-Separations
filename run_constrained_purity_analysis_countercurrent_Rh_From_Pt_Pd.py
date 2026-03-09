@@ -160,3 +160,37 @@ result.to_csv('countercurrent_constrained_purity_analysis_results_'+str(total_co
 #   Rh_recov=recov_aq_arr[-1,2]
 #   max_recov_list.append(Rh_recov)
 #   vol_flow_list.append(Q_org_det)
+
+# I want to functionalize the above code and then loop over different sets of isotherm parameters to see how the required organic flow rate
+# changes to achieve a particular purity of Rh in the aqueous phase, 
+# as a function of the number of stages, and how the exit concentrations, recoveries, 
+# and purities change with number of stages at the point where we achieve the desired purity value. 
+# I will use the same model and solver as in the constrained purity analysis, 
+# but I will loop over different sets of isotherm parameters.
+
+
+a=run_constrained_purity_analysis_countercurrent(C_in, 
+                                                   q_in, 
+                                                   C_lig, 
+                                                   Q_aq,
+                                                   Q_org_ig, 
+                                                   q_max_arr, 
+                                                   K_Eq_arr, 
+                                                   95,
+                                                   starting_stage,
+                                                   highest_stage,
+                                                   ligand,
+                                                   PGM_labels,
+                                                   MW_arr,
+                                                   Rh_purity_resid_fcn_countercurrent)
+print('Final Result DF from functionalized code:')
+print(a)
+print(a['PPM Mass Total Feed [mg/L]'])
+# result.to_csv('countercurrent_constrained_purity_analysis_results_'+str(total_conc_ppm_mass)+'_ppm_'+str(PGM_labels)+'_PGMs_'+str(desired_purity_Rh)+'_percent_purity_Rh_'+str(ligand)+'_ligand.csv', index=False)
+# df.plot(linestyle='--',marker='v')
+
+#   use the previous solution as the new guess, but scaled down by 10% to hopefully ensure that we approach the solution from the same direction
+  
+  # this function will run the constrained purity analysis for countercurrent operation to achieve a desired purity of Rh in the aqueous phase, and will return the results in a DF format that we can then use to analyze how the required organic flow rate changes with number of stages, and how the exit concentrations, recoveries, and purities change with number of stages at the point where we achieve the desired purity value.
+  # the function will take as input the initial concentrations and uptakes, the ligand concentration, the aqueous flow rate, an array of number of stages to simulate, the isotherm parameters (q_max and K_eq), and the desired purity of Rh in the aqueous phase. The function will return a DF with the results of the simulations, including the required organic flow rate to achieve the desired purity value for each number of stages, as well as the exit concentrations, recoveries, and purities for each number of stages at the point where we achieve the desired purity value.
+  # pass
