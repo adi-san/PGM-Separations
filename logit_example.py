@@ -12,3 +12,5 @@ plt.title("PDF proportional to |logit(x)|")
 plt.xlabel("x")
 plt.ylabel("density")
 plt.show()
+
+# try to derive the logit based PDF

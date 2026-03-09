@@ -43,7 +43,7 @@ start_outer_loop=datetime.now()
 monte_carlo_df_list=[]
 
 num_samples=1000
-
+# takes about 4 hrs to run this
 for i in range(num_samples):
     start=datetime.now()
     q_max_list_random=df_isotherm_random_filtered_q_max['Random Sample '+str(i+1)].to_list()
