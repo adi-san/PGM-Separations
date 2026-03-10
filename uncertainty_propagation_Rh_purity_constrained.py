@@ -42,8 +42,8 @@ print(df_isotherm_random_filtered_q_max)
 start_outer_loop=datetime.now()
 monte_carlo_df_list=[]
 
-num_samples=1000
-# takes about 4 hrs to run this
+num_samples=100
+# takes about 4 hrs to run this with 1000 samples
 for i in range(num_samples):
     start=datetime.now()
     q_max_list_random=df_isotherm_random_filtered_q_max['Random Sample '+str(i+1)].to_list()
@@ -70,7 +70,6 @@ for i in range(num_samples):
     # q_max_K_eq_df=
     random_result[q_max_label_list]=q_max_arr_random
     random_result[K_eq_label_list]=K_Eq_arr_random
-    
     print(random_result)
     end=datetime.now()
     print('Time taken for iteration '+str(i+1)+': '+str(end-start))
@@ -82,7 +81,7 @@ print('Total time taken for all iterations: '+str(end_outer_loop-start_outer_loo
 monte_carlo_df=pd.concat(monte_carlo_df_list, ignore_index=True)
 print('Final Monte Carlo DF:')
 print(monte_carlo_df)
-monte_carlo_df.to_csv('monte_carlo_results_'+ligand+'_Rh_From_Pt_Pd'+'.csv', index=False)
+monte_carlo_df.to_csv('monte_carlo_results_'+ligand+'_'+str(num_samples)+'_random_samples'+'_Rh_From_Pt_Pd'+'.csv', index=False)
 
 non_random=run_constrained_purity_analysis_countercurrent(C_in, 
                                                    q_in, 
