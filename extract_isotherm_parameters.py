@@ -12,6 +12,7 @@ with pd.ExcelFile('unary_isothern_extraction_data_automation.xlsx') as xlsx:
     # print(f"Sheets found: {names}")
     df_list=[]
     for sheet in names:
+        print(f"Processing sheet: {sheet}")
         df=pd.read_excel(xlsx, sheet)
         x_data=df['Ce (M)'].to_numpy()
         y_data=df['q (mol/mol)'].to_numpy()
@@ -29,13 +30,17 @@ with pd.ExcelFile('unary_isothern_extraction_data_automation.xlsx') as xlsx:
         DOF=n-(p+1)
         MSE=np.dot(resid,resid)/(DOF)
         covar_matrix=MSE*J_T_J_inv
+        #for meeting 3/10
+        print('Covariance Matrix:')
+        print(covar_matrix)
+        #end
         # collect the standard errors of the parameters, which are the square roots of the diagonal elements of the covariance matrix
         std_errors=np.sqrt(np.diag(covar_matrix))
         MOEs=std_errors*t.ppf((1 + confidence_level) / 2, DOF)
         # create a DF to store the results for this sheet, and then we will concatenate these DFs for all sheets to make a summary DF
         results_df=pd.DataFrame({'Parameter': ['q_max [mol PGM/mol Ligand]', 'K_eq [~]'], 'Value': param_arr, 'Standard Error': std_errors, 'Margin of Error '+str(confidence_level*100)+'% Confidence': MOEs})
         df_list.append(results_df)
-        # print(results_df)
+        print(results_df)
     # concatenate the results DFs for all sheets into a summary DF
     # I want the PGM_ligand to be the index of the summary DF, so I will set the index of each results_df to be the sheet name before concatenating
         results_df.set_index(pd.Index([sheet]*len(results_df)), inplace=True)
