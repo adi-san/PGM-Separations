@@ -4,8 +4,8 @@ df_constrained_nonrandom=pd.read_csv('countercurrent_constrained_purity_analysis
 
 # print(df_constrained_nonrandom)
 
-df_random=pd.read_csv('monte_carlo_results_ddFc_Rh_From_Pt_Pd.csv')
-# df_random=pd.read_csv('monte_carlo_results_ddFc_100_random_samples_Rh_From_Pt_Pd.csv')
+# df_random=pd.read_csv('monte_carlo_results_ddFc_Rh_From_Pt_Pd.csv')
+df_random=pd.read_csv('monte_carlo_results_ddFc_100_random_samples_Rh_From_Pt_Pd.csv')
 print(df_random)
 # in the random df, I want to remove any of the rows where q_org is negative or greater than 1, as these indicate nonsense results
 df_random_filtered=df_random[(df_random['Q_org [L/time]']>0) & (df_random['Q_org [L/time]']<1)]
