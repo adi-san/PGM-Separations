@@ -26,6 +26,9 @@ total_conc_ppm_mass=500 # mg/L
 MW_arr=np.array([195.084,106.42,102.91])
 C_lig=0.1 #mols of ligand/L solution
 desired_HK_PGM_purity=95
+q_max_label_list=['q_max_'+label for label in PGM_labels]
+K_eq_label_list=['K_eq_'+label for label in PGM_labels]
+
 
 # only fixed in first sep
 rel_mol_frac_arr_S1=np.array([.45, .45, .1]) #Pt, Pd, Rh
@@ -49,10 +52,12 @@ starting_stage_S2=4
 highest_stage_S2=13
 
 q_max_arr_S1 = np.array([0.283184293825222,0.56945642916197,0.00376986289722275]) #mol PGM/mol ddFc
-K_Eq_arr_S1 = np.array([1822.21079088769,2662.60590731049, 2401.50309384427]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky
+K_Eq_arr_S1 = np.array([1822.21079088769,2662.60590731049, 2401.50309384427]) # truly dimensionless parameters, 
+# I may need to scale these by powers of 10 if convergence proves to be tricky
 
 q_max_arr_S2 = np.array([0.018775015,0.104929611,0.001814625]) #mol PGM/mol coeFc
-K_Eq_arr_S2 = np.array([285.1951444,2169.894489,866.4940906]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #coeFc
+K_Eq_arr_S2 = np.array([285.1951444,2169.894489,866.4940906]) # truly dimensionless parameters, 
+#I may need to scale these by powers of 10 if convergence proves to be tricky #coeFc
 
 start=datetime.now()
 non_random_S1=run_constrained_purity_analysis_countercurrent(C_in_S1, 
@@ -70,8 +75,12 @@ non_random_S1=run_constrained_purity_analysis_countercurrent(C_in_S1,
                                                    MW_arr,
                                                    Rh_purity_resid_fcn_countercurrent)
 print('Final Result DF from non-random functionalized code:')
+# add K_eq and q_max values to the non_random_S1 df for clarity and so that I can use these values in the second separation
+non_random_S1[q_max_label_list]=q_max_arr_S1
+non_random_S1[K_eq_label_list]=K_Eq_arr_S1
 # add S1 to all the columns of the non_random_S1 df to indicate that these results are from the first separation unit
 non_random_S1.columns=['S1 '+col for col in non_random_S1.columns]
+S1_column_list=non_random_S1.columns.to_list()
 print(non_random_S1)
 
 for index, row in non_random_S1.iterrows():
@@ -101,9 +110,20 @@ for index, row in non_random_S1.iterrows():
                                                    PGM_labels,
                                                    MW_arr,
                                                    Pt_purity_resid_fcn_countercurrent)
+    non_random_S2[q_max_label_list]=q_max_arr_S2
+    non_random_S2[K_eq_label_list]=K_Eq_arr_S2
     # print('Final Result DF from non-random functionalized code for second separation:')
     non_random_S2.columns=['S2 '+col for col in non_random_S2.columns]
-    print(non_random_S2)
+    # print(non_random_S2)
+    # create a combined df with the results from both separations
+    # df1=non_random_S1.loc[index].to_frame().T.reset_index(drop=True)
+    values_of_S1=row[S1_column_list].to_list()
+    # make a df that is of the same dimensions as S2 but with the values of S1 repeated in each row
+    df_S1_for_concat=pd.DataFrame([values_of_S1]*len(non_random_S2), columns=S1_column_list)
+    combined_df=pd.concat([df_S1_for_concat.reset_index(drop=True), non_random_S2.reset_index(drop=True)], axis=1)
+    # combined_df=pd.concat([non_random_S1.loc[index].to_frame().T.reset_index(drop=True), non_random_S2.reset_index(drop=True)], axis=1)
+    # print('Combined DF for index '+str(index)+':')
+    print(combined_df)
 end=datetime.now()
 print('Time taken for non-random case: '+str(end-start))
 print('mom')
