@@ -105,6 +105,7 @@ for index, row in non_random_S1.iterrows():
     print(non_random_S2)
 end=datetime.now()
 print('Time taken for non-random case: '+str(end-start))
+print('mom')
 
     # print('C_in_S2 for index '+str(index)+': '+str(C_in_S2))
     # get the C_in for the second separation from the results of the first separation
