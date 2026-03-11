@@ -212,6 +212,7 @@ def run_constrained_purity_analysis_countercurrent(C_in,
     
     Q_org_det=result[0]
   #   print(result)
+    #test to see if the print is making runtime slower
     print(f'For n_stages={n_stages}, the required organic flow rate to achieve {desired_purity_PGM}% purity of Rh in the aqueous phase is {Q_org_det} L/time.')
     C_counter_ig=np.tile(C_in,n_stages)
     C_countercurrent=least_squares(countercurrent_model, C_counter_ig, args=(C_lig, Q_aq, Q_org_det,n_stages, q_in,C_in,q_max_arr,K_Eq_arr), ftol=1e-11, gtol=1e-11, xtol=1e-11,bounds=opt_bounds, method='trf')
@@ -249,7 +250,7 @@ def run_constrained_purity_analysis_countercurrent(C_in,
 
   Conc_out_labels=['C_'+label+'_out [M]' for label in PGM_labels]
   Conc_in_labels=['C_'+label+'_in [M]' for label in PGM_labels]
-  q_in_labels=['q_'+label+'_in [mol PGM/mol ddFc]' for label in PGM_labels]
+  q_in_labels=['q_'+label+'_in [mol PGM/mol ligand]' for label in PGM_labels]
   q_out_labels=['q_'+label+'_out [mol PGM/mol ligand]' for label in PGM_labels]
   mat_bal_labels=['Material Residual '+label+' [mol PGM/time]' for label in PGM_labels]
   # start generating a DF to save the results of the simulations in a nice format, which we can then save as a CSV and also use to make some nice plots to visualize how the exit concentrations, recoveries, and purities change with number of stages at the point where we achieve the desired purity value
