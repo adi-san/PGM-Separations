@@ -72,7 +72,7 @@ non_random_S1=run_constrained_purity_analysis_countercurrent(C_in_S1,
 print('Final Result DF from non-random functionalized code:')
 # add S1 to all the columns of the non_random_S1 df to indicate that these results are from the first separation unit
 non_random_S1.columns=['S1 '+col for col in non_random_S1.columns]
-# print(non_random_S1.columns)
+print(non_random_S1)
 
 for index, row in non_random_S1.iterrows():
     # run the second separation for each row of the first separation results df
@@ -102,6 +102,7 @@ for index, row in non_random_S1.iterrows():
                                                    MW_arr,
                                                    Pt_purity_resid_fcn_countercurrent)
     # print('Final Result DF from non-random functionalized code for second separation:')
+    non_random_S2.columns=['S2 '+col for col in non_random_S2.columns]
     print(non_random_S2)
 end=datetime.now()
 print('Time taken for non-random case: '+str(end-start))
