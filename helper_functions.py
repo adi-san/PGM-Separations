@@ -201,6 +201,7 @@ def run_constrained_purity_analysis_countercurrent(C_in,
   vol_flow_list=[]
   C_out_list=[]
   q_out_list=[]
+  ier_list=[]
   for n_stages_float in n_stages_arr:
     n_stages = int(n_stages_float)
     n_stages_int_list.append(n_stages)
@@ -208,18 +209,21 @@ def run_constrained_purity_analysis_countercurrent(C_in,
     up_b=np.ones(len(C_in)*n_stages)*np.inf
     opt_bounds = (low_b, up_b)
 
-    result=fsolve(constrained_purity_func,Q_org_ig,args=(C_lig, Q_aq,n_stages, q_in,C_in,q_max_arr,K_Eq_arr,desired_purity_PGM), xtol=1e-6)
+    root, info, ier, mesg=fsolve(constrained_purity_func,Q_org_ig,args=(C_lig, Q_aq,n_stages, q_in,C_in,q_max_arr,K_Eq_arr,desired_purity_PGM), xtol=1e-6,full_output=True)
     
-    Q_org_det=result[0]
+    Q_org_det=root[0]
   #   print(result)
     #test to see if the print is making runtime slower
     print(f'For n_stages={n_stages}, the required organic flow rate to achieve {desired_purity_PGM}% purity of Rh in the aqueous phase is {Q_org_det} L/time.')
+    if ier!=1:
+      print(f'Desired HK purity likely not met: ier= {ier}')
+    # print(f'ier: {ier}')
     C_counter_ig=np.tile(C_in,n_stages)
     C_countercurrent=least_squares(countercurrent_model, C_counter_ig, args=(C_lig, Q_aq, Q_org_det,n_stages, q_in,C_in,q_max_arr,K_Eq_arr), ftol=1e-11, gtol=1e-11, xtol=1e-11,bounds=opt_bounds, method='trf')
     C_countercurrent_concs=C_countercurrent.x
   #   check the l2 norm of the objective function at the solution, which should be close to zero if the solution is good as mass is conserved across stages and thus the mass balance equations should be satisfied at the solution
-    if np.linalg.norm(countercurrent_model(C_countercurrent_concs, C_lig, Q_aq, Q_org_det,n_stages, q_in,C_in,q_max_arr,K_Eq_arr))>1e-8:
-      print(f'Warning: The solution for n_stages={n_stages} and Q_org={Q_org_det} may not have converged properly, as the l2 norm of the objective function is greater than 1e-8.')
+    if np.linalg.norm(countercurrent_model(C_countercurrent_concs, C_lig, Q_aq, Q_org_det,n_stages, q_in,C_in,q_max_arr,K_Eq_arr))>1e-7:
+      print(f'Warning: The solution for n_stages={n_stages} and Q_org={Q_org_det} may not have converged properly, as the l2 norm of the objective function is greater than 1e-7.')
     C_countercurrent_mat=C_countercurrent_concs.reshape(int(len(C_countercurrent_concs)/int(len(C_in))),int(len(C_in)))
     C_counter_plot=np.vstack((C_in,C_countercurrent_mat))
     recov_aq_arr=compute_recov_aq_arr(C_counter_plot,n_stages)
@@ -232,6 +236,7 @@ def run_constrained_purity_analysis_countercurrent(C_in,
     C_out_list.append(C_counter_plot[-1,:])
     q_out=q_func_langmuir_relation(q_max_arr, K_Eq_arr, C_counter_plot[1,:])
     q_out_list.append(q_out)
+    ier_list.append(ier)
     # price_Rh=price_arr[-1]*C_counter_plot[-1,-1] #$Rh/L feed
     # max_sales_Rh_list.append(price_Rh)
     # print(price_Rh)
@@ -283,6 +288,7 @@ def run_constrained_purity_analysis_countercurrent(C_in,
   result['C_lig [L/time]']=C_lig
   result['Q_aq/(Q_org*C_lig) [1/M]']=Q_aq/(vol_flow_arr*C_lig)
   result['Ligand']=ligand
+  result['ier']=ier_list
   # result['Max Sales Rh [$Rh/L feed basis]']=max_sales_Rh_list
   # result=result[['Stages']+Conc_in_labels+q_in_labels+Conc_out_labels+q_out_labels]
   # result=result[['Stages']+Conc_in_labels+q_in_labels+Conc_out_labels+q

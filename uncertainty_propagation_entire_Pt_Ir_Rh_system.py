@@ -1,8 +1,8 @@
 from helper_functions import *
 
 # so we are going to propagate uncertainty throughout the first and second separation unit
-# first unit will be ddFc ligand to separate out Rh from Pt and Pd
-# second unit will be coeFc ligand to separate out Pt from Pd and Rh
+# first unit will be ddFc ligand to separate out Rh from Pt and Ir
+# second unit will be deFc ligand to separate out Pt from Ir and Rh
 # We will vary first unit stages from 3-12
 # We will vary second unit stages from 4-13
 # therefore, there are 10x10=100 possible pairs of stages
@@ -15,15 +15,15 @@ from helper_functions import *
 '''
 
 ligand_S1='ddFc'
-ligand_S2='coeFc'
-PGM_labels=['Pt','Pd','Rh']
+ligand_S2='deFc'
+PGM_labels=['Pt','Ir','Rh']
 
 
 
 # fixed in both sep units
 q_in=np.array([0,0,0])
 total_conc_ppm_mass=500 # mg/L
-MW_arr=np.array([195.084,106.42,102.91])
+MW_arr=np.array([195.084,192.22,102.91]) #Pt, Ir, Rh
 C_lig=0.1 #mols of ligand/L solution
 desired_HK_PGM_purity=95
 
@@ -32,7 +32,7 @@ K_eq_label_list=['K_eq_'+label for label in PGM_labels]
 
 
 # only fixed in first sep
-rel_mol_frac_arr_S1=np.array([.45, .45, .1]) #Pt, Pd, Rh
+rel_mol_frac_arr_S1=np.array([1/3, 1/3, 1/3]) #Pt, Ir, Rh, MUST sum to 1
 C_in_S1=ppm_mass_tot_to_M_concs(total_conc_ppm_mass ,rel_mol_frac_arr_S1,MW_arr)
 Q_aq_S1=1 # L/time
 PGM_ligand_pairs_S1=[label+'_'+ligand_S1 for label in PGM_labels]
@@ -44,7 +44,7 @@ PGM_ligand_pairs_S2=[label+'_'+ligand_S2 for label in PGM_labels]
 
 Q_org_ig_S1=.2 #initial guess for organic flow rate, can be changed if needed
 
-Q_org_ig_S2=.2 #initial guess for organic flow rate, can be changed if needed
+Q_org_ig_S2=.1 #initial guess for organic flow rate, can be changed if needed
 
 starting_stage_S1=3
 highest_stage_S1=12
@@ -52,13 +52,13 @@ highest_stage_S1=12
 starting_stage_S2=4
 highest_stage_S2=13
 
-q_max_arr_S1 = np.array([0.283184293825222,0.56945642916197,0.00376986289722275]) #mol PGM/mol ddFc
-K_Eq_arr_S1 = np.array([1822.21079088769,2662.60590731049, 2401.50309384427]) # truly dimensionless parameters, 
+q_max_arr_S1 = np.array([0.283184293825222,0.61167783535938,0.00376986289722275]) #mol PGM/mol ddFc
+K_Eq_arr_S1 = np.array([1822.21079088769,950.348657314128, 2401.50309384427]) # truly dimensionless parameters, 
 # I may need to scale these by powers of 10 if convergence proves to be tricky
 
-q_max_arr_S2 = np.array([0.018775015,0.104929611,0.001814625]) #mol PGM/mol coeFc
-K_Eq_arr_S2 = np.array([285.1951444,2169.894489,866.4940906]) # truly dimensionless parameters, 
-#I may need to scale these by powers of 10 if convergence proves to be tricky #coeFc
+q_max_arr_S2 = np.array([0.272571356225773,0.409453841140154,0.0031092147446044]) #mol PGM/mol deFc
+K_Eq_arr_S2 = np.array([349.540544019572,950.330400338052,369.020998529195]) # truly dimensionless parameters, 
+#I may need to scale these by powers of 10 if convergence proves to be tricky #deFc
 
 start=datetime.now()
 non_random_S1=run_constrained_purity_analysis_countercurrent(C_in_S1, 
@@ -91,7 +91,7 @@ for index, row in non_random_S1.iterrows():
     # get the C_in for the second separation from the results of the first separation
     q_out_S1=row[['S1 q_'+label+'_out [mol PGM/mol ligand]' for label in PGM_labels]].to_numpy()
     Q_org_out_S1=row['S1 Q_org [L/time]']
-    rel_mol_frac_arr_S2=q_out_S1/np.sum(q_out_S1) #Pt, Pd, Rh
+    rel_mol_frac_arr_S2=q_out_S1/np.sum(q_out_S1) #Pt, Ir, Rh
     C_in_S2=ppm_mass_tot_to_M_concs(total_conc_ppm_mass ,rel_mol_frac_arr_S2,MW_arr)
     Q_aq_S2=water_flow_successive_stages(q_out_S1, 
                                  total_conc_ppm_mass, 
@@ -105,7 +105,7 @@ for index, row in non_random_S1.iterrows():
                                                    Q_org_ig_S2, 
                                                    q_max_arr_S2, 
                                                    K_Eq_arr_S2, 
-                                                   desired_HK_PGM_purity,
+                                                   95,
                                                    starting_stage_S2,
                                                    highest_stage_S2,
                                                    ligand_S2,
@@ -132,7 +132,7 @@ print('Time taken for non-random case: '+str(end-start))
 # concatenate the dfs
 non_random_df=pd.concat(non_random_df_list,ignore_index=True)
 # print(non_random_df)
-non_random_df.to_csv('Constrained Purity Analysis Pt Pd Rh/constrained_purity_analysis_Pt_Pd_Rh_with_regressed_parameters.csv', index=False)
+non_random_df.to_csv('Constrained Purity Analysis Pt Ir Rh/constrained_purity_analysis_Pt_Ir_Rh_with_regressed_parameters.csv', index=False)
 
     # print('C_in_S2 for index '+str(index)+': '+str(C_in_S2))
     # get the C_in for the second separation from the results of the first separation
@@ -157,7 +157,8 @@ df_isotherm_random_filtered_S2 = df_isotherm_random[df_isotherm_random['PGM Liga
 df_isotherm_random_filtered_q_max_S2=df_isotherm_random_filtered_S2[df_isotherm_random_filtered_S2['Parameter'].isin(['q_max [mol PGM/mol Ligand]'])]
 df_isotherm_random_filtered_K_eq_S2=df_isotherm_random_filtered_S2[df_isotherm_random_filtered_S2['Parameter'].isin(['K_eq [~]'])]
 # for the whole shabang, do 500 random samples
-num_samples=500
+'''
+num_samples=2
 for i in range(num_samples):
     start=datetime.now()
 
@@ -201,7 +202,7 @@ for i in range(num_samples):
     # get the C_in for the second separation from the results of the first separation
         q_out_S1=row[['S1 q_'+label+'_out [mol PGM/mol ligand]' for label in PGM_labels]].to_numpy()
         Q_org_out_S1=row['S1 Q_org [L/time]']
-        rel_mol_frac_arr_S2=q_out_S1/np.sum(q_out_S1) #Pt, Pd, Rh
+        rel_mol_frac_arr_S2=q_out_S1/np.sum(q_out_S1) #Pt, Ir, Rh
         C_in_S2=ppm_mass_tot_to_M_concs(total_conc_ppm_mass ,rel_mol_frac_arr_S2,MW_arr)
         Q_aq_S2=Q_aq=water_flow_successive_stages(q_out_S1, 
                                     total_conc_ppm_mass, 
@@ -238,8 +239,9 @@ for i in range(num_samples):
     end=datetime.now()
     print('Time taken for iteration '+str(i+1)+': '+str(end-start))
     random_df=pd.concat(random_df_list,ignore_index=True)
-    random_df.to_csv('Constrained Purity Analysis Pt Pd Rh/Uncertainty Results/constrained_purity_analysis_Pt_Pd_Rh_with_regressed_parameters_random_sample_'+str(i+1)+'.csv', index=False)
+    random_df.to_csv('Constrained Purity Analysis Pt Ir Rh/Uncertainty Results/constrained_purity_analysis_Pt_Ir_Rh_with_regressed_parameters_random_sample_'+str(i+1)+'.csv', index=False)
     end=datetime.now()
     # monte_carlo_df_list.append(random_result)
 
 end_outer_loop=datetime.now()
+'''
