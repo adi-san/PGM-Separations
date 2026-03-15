@@ -44,13 +44,13 @@ PGM_ligand_pairs_S2=[label+'_'+ligand_S2 for label in PGM_labels]
 
 Q_org_ig_S1=.2 #initial guess for organic flow rate, can be changed if needed
 
-Q_org_ig_S2=.1 #initial guess for organic flow rate, can be changed if needed
+Q_org_ig_S2=.052 #initial guess for organic flow rate, can be changed if needed
 
-starting_stage_S1=3
-highest_stage_S1=12
+starting_stage_S1=5
+highest_stage_S1=14
 
-starting_stage_S2=4
-highest_stage_S2=13
+starting_stage_S2=5
+highest_stage_S2=14
 
 q_max_arr_S1 = np.array([0.283184293825222,0.61167783535938,0.00376986289722275]) #mol PGM/mol ddFc
 K_Eq_arr_S1 = np.array([1822.21079088769,950.348657314128, 2401.50309384427]) # truly dimensionless parameters, 
@@ -131,8 +131,11 @@ end=datetime.now()
 print('Time taken for non-random case: '+str(end-start))
 # concatenate the dfs
 non_random_df=pd.concat(non_random_df_list,ignore_index=True)
-# print(non_random_df)
-non_random_df.to_csv('Constrained Purity Analysis Pt Ir Rh/constrained_purity_analysis_Pt_Ir_Rh_with_regressed_parameters.csv', index=False)
+print(non_random_df)
+# non_random_df.to_csv('Constrained Purity Analysis Pt Ir Rh/constrained_purity_analysis_Pt_Ir_Rh_with_regressed_parameters.csv', index=False)
+
+
+
 
     # print('C_in_S2 for index '+str(index)+': '+str(C_in_S2))
     # get the C_in for the second separation from the results of the first separation

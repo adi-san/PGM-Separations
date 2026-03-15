@@ -2,18 +2,18 @@ from helper_functions import *
 # from run_countercurrent_simulations import K_Eq_arr, q_max_arr, C_in, q_in, C_lig, Q_aq, test_flowrates
 # S2 of 
 
-n_stages_arr=np.array([4])
+n_stages_arr=np.array([5])
 q_in=np.array([0.0,0.0,0.0])
 # total_conc_ppm_mass=500 # mg/L
 # rel_mol_frac_arr=np.array([1/3, 1/3, 1/3]) #Pt, Pd, Rh
 # MW_arr=np.array([195.084,192.22,102.91])
 desired_purity_Pt=95
 
-C_in=np.array([0.0012708099000744,0.00128089953942149,0.000057048022410713])
+C_in=np.array([0.00127250930814378,0.00129714681171193,0.0000234790980741356])
 
-Q_aq=0.779314076118459 # L/time
+Q_aq=0.773332585876166 # L/time
 C_lig=0.1 #mols of ligand/L solution
-test_flowrates=np.linspace(0.0,1,40)
+test_flowrates=np.linspace(0.0,.25,50)
 
 q_max_arr = np.array([0.272571356225773,0.409453841140154,0.0031092147446044]) #mol PGM/mol deFc
 K_Eq_arr = np.array([349.540544019572,950.330400338052,369.020998529195]) # truly dimensionless parameters,

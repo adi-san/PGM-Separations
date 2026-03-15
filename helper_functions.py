@@ -242,12 +242,17 @@ def run_constrained_purity_analysis_countercurrent(C_in,
     # print(price_Rh)
 
     # below is an approach to initialize guesses: simple bisection method
-    if n_stages==2:
-      Q_org_ig=Q_org_det/2
-    elif n_stages==3:
-      Q_org_ig=Q_org_det/1.5
-    else:
-      Q_org_ig=Q_org_det
+    
+    # if n_stages==2:
+    #   Q_org_ig=Q_org_det/2
+    # elif n_stages==3:
+    #   Q_org_ig=Q_org_det/1.5
+    # elif n_stages==4:
+    #   Q_org_ig=Q_org_det*3/4
+    # elif n_stages==5:
+    #   Q_org_ig=Q_org_det*4/5
+    Q_org_ig=Q_org_det*(n_stages-1)/n_stages
+    
   
   print('Done with all simulations!')
   max_recov_arr=np.array(max_recov_list)
