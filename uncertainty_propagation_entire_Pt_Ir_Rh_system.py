@@ -3,8 +3,8 @@ from helper_functions import *
 # so we are going to propagate uncertainty throughout the first and second separation unit
 # first unit will be ddFc ligand to separate out Rh from Pt and Ir
 # second unit will be deFc ligand to separate out Pt from Ir and Rh
-# We will vary first unit stages from 3-12
-# We will vary second unit stages from 4-13
+# We will vary first unit stages from 5-14
+# We will vary second unit stages from 5-14
 # therefore, there are 10x10=100 possible pairs of stages
 '''
 * we will do 500 random generations of 12 parameters (q_i_maxs and K_eqs):
@@ -131,8 +131,8 @@ end=datetime.now()
 print('Time taken for non-random case: '+str(end-start))
 # concatenate the dfs
 non_random_df=pd.concat(non_random_df_list,ignore_index=True)
-print(non_random_df)
-# non_random_df.to_csv('Constrained Purity Analysis Pt Ir Rh/constrained_purity_analysis_Pt_Ir_Rh_with_regressed_parameters.csv', index=False)
+# print(non_random_df)
+non_random_df.to_csv('Constrained Purity Analysis Pt Ir Rh/constrained_purity_analysis_Pt_Ir_Rh_with_regressed_parameters.csv', index=False)
 
 
 
