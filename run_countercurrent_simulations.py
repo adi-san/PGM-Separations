@@ -8,17 +8,22 @@ q_in=np.array([0,0,0])
 # total_conc_ppm_mass=500 # mg/L
 # rel_mol_frac_arr=np.array([.45, .45, .1]) #Pt, Pd, Rh
 # MW_arr=np.array([195.084,106.42,102.91])
-
-C_in=np.array([0.00126794946836896,0.00130264452745589,0.0000218541914793087])
-n_stages=13
-Q_aq=0.773024571196713 # L/time
+C_in=np.array([0.00154143585092054,0.00154143585092054,0.000342541300204565])
+# C_in=np.array([0.00126794946836896,0.00130264452745589,0.0000218541914793087])
+n_stages=5
+Q_aq=1 # L/time
+# Q_aq=0.773024571196713 # L/time
 C_lig=0.1 #mols of ligand/L solution
-Q_org=0.0525160616483484
+Q_org=0.121348176216534 # L/time
 
 eps=1e-11
 
-q_max_arr = np.array([0.272571356225773,0.409453841140154,0.0031092147446044]) #mol PGM/mol deFc
-K_Eq_arr = np.array([349.540544019572,950.330400338052,369.020998529195]) # truly dimensionless parameters,
+q_max_arr = np.array([0.283184293825222,0.56945642916197,0.00376986289722275]) #mol PGM/mol ddFc
+K_Eq_arr = np.array([1822.21079088769,2662.60590731049, 2401.50309384427]) # truly dimensionless parameters, 
+# I may need to scale these by powers of 10 if convergence proves to be tricky #ddFc
+
+# q_max_arr = np.array([0.272571356225773,0.409453841140154,0.0031092147446044]) #mol PGM/mol deFc
+# K_Eq_arr = np.array([349.540544019572,950.330400338052,369.020998529195]) # truly dimensionless parameters,
 
 low_b = np.zeros(len(C_in)*n_stages)
 up_b=np.ones(len(C_in)*n_stages)*np.inf
@@ -75,8 +80,12 @@ plt.show()
 q_max_repeat=np.tile(q_max_arr,n_stages)
 q_max_mat=np.array(q_max_repeat).reshape(int(len(C_countercurrent_concs)/int(len(C_in))),int(len(C_in)))
 print(q_max_mat)
-print("Purity of Pt in Aqueous Exit", C_countercurrent_concs[-3]/np.sum(C_countercurrent_concs[-3:]))
-print("Recovery of Pt in Aqueous Exit", C_countercurrent_concs[-3]/C_in[-3])
+print("Purity of Rh in Aqueous Exit", C_countercurrent_concs[-1]/np.sum(C_countercurrent_concs[-3:]))
+print("Recovery of Rh in Aqueous Exit", C_countercurrent_concs[-1]/C_in[-1])
+
+# print("Purity of Pt in Aqueous Exit", C_countercurrent_concs[-3]/np.sum(C_countercurrent_concs[-3:]))
+# print("Recovery of Pt in Aqueous Exit", C_countercurrent_concs[-3]/C_in[-3])
+
 mat_bal=C_countercurrent_mat[-1,:]*Q_aq+Q_org*C_lig*uptake_mat[0,:]
 print('Material In [mol/hr] '+str(C_in*Q_aq))
 print('Material Out [mol/hr] '+str(mat_bal))
