@@ -32,23 +32,41 @@ for index, row in dropped_rows.iterrows():
 stage_list=[]
 min_recovery_list=[]
 max_recovery_list=[]
+low_quartile_recovery_list=[]
+up_quartile_recovery_list=[]
 min_flow_list=[]
 max_flow_list=[]
+low_quartile_org_flow_list=[]
+up_quartile_org_flow_list=[]
 for stages, group in df_random_filtered.groupby('Stages'):
     min_recovery=group['PGM Recovery [%]'].min()
     max_recovery=group['PGM Recovery [%]'].max()
+    recov_list=group['PGM Recovery [%]'].to_list()
+    low_quartile_recovery=np.percentile(recov_list,25)
+    up_quartile_recovery=np.percentile(recov_list,75)
     min_flow=group['Q_org [L/time]'].min()
     max_flow=group['Q_org [L/time]'].max()
+    org_flow_list=group['Q_org [L/time]'].to_list()
+    low_quartile_flow=np.percentile(org_flow_list,25)
+    up_quartile_flow=np.percentile(org_flow_list,75)
     print('Stages:', stages)
     print('Min Recovery:', min_recovery)
     print('Max Recovery:', max_recovery)
+    print('Low Quartile Recovery:', low_quartile_recovery)
+    print('Upper Quartile Recovery:', up_quartile_recovery)
     print('Min Organic Flow Rate:', min_flow)
     print('Max Organic Flow Rate:', max_flow)
+    print('Low Quartile Org Flow:', low_quartile_flow)
+    print('Upper Quartile Org Flow:', up_quartile_flow)
     stage_list.append(stages)
     min_recovery_list.append(min_recovery)
     max_recovery_list.append(max_recovery)
+    low_quartile_recovery_list.append(low_quartile_recovery)
+    up_quartile_recovery_list.append(up_quartile_recovery)
     min_flow_list.append(min_flow)
     max_flow_list.append(max_flow)
+    low_quartile_org_flow_list.append(low_quartile_flow)
+    up_quartile_org_flow_list.append(up_quartile_flow)
     # count+=1
     # print(count)
 # print(df_random_filtered_sorted)
@@ -87,20 +105,30 @@ for i in range(len(stage_list)):
     stages=stage_list[i]
     min_recovery=min_recovery_list[i]
     max_recovery=max_recovery_list[i]
+    low_quartile_recovery=low_quartile_recovery_list[i]
+    up_quartile_recovery=up_quartile_recovery_list[i]
+
     min_flow=min_flow_list[i]
     max_flow=max_flow_list[i]
+    low_quartile_flow=low_quartile_org_flow_list[i]
+    up_quartile_flow=up_quartile_org_flow_list[i]
 
     # plot vertical line for recovery range
     ax1.vlines(x=stages, ymin=min_recovery, ymax=max_recovery, color='tab:blue', alpha=0.5)
+    # I want a vertical iqr at each point
+    ax1.vlines(x=stages, ymin=low_quartile_recovery, ymax=up_quartile_recovery, color='tab:blue', alpha=0.2,linewidth=10)
     # at the min and max, add a horizontal line like a cap to the vertical line to make it look like an error bar
     ax1.hlines(y=min_recovery, xmin=stages-0.2, xmax=stages+0.2, color='tab:blue', alpha=0.5)
     ax1.hlines(y=max_recovery, xmin=stages-0.2, xmax=stages+0.2, color='tab:blue', alpha=0.5)
     
     # plot vertical line for organic flow rate range
     ax2.vlines(x=stages, ymin=min_flow, ymax=max_flow, color='tab:red', alpha=0.5)
+    # I want a vertical iqr at each point
+    ax2.vlines(x=stages, ymin=low_quartile_flow, ymax=up_quartile_flow, color='tab:red', alpha=0.2,linewidth=10)
     # at the min and max, add a horizontal line like a cap to the vertical line to make it look like an error bar
     ax2.hlines(y=min_flow, xmin=stages-0.2, xmax=stages+0.2, color='tab:red', alpha=0.5)
     ax2.hlines(y=max_flow, xmin=stages-0.2, xmax=stages+0.2, color='tab:red', alpha=0.5)
+    # I 
 # ax1.plot([], [], color='tab:blue', alpha=0.5, label='Recovery Uncertainty Range')
 ax1.legend(lines, labels, loc='center right')
 # add the vertical lines to the legend
