@@ -166,7 +166,8 @@ df_random_filtered=df_constrained_random[(df_constrained_random['S1 Q_org [L/tim
 # get the K_eq and q_max values from the rows we dropped, and see if they are in a reasonable range
 dropped_rows=df_constrained_random[~((df_constrained_random['S1 Q_org [L/time]']>0) 
                                    & (df_constrained_random['S1 Q_org [L/time]']<1))
-                                   & ~((df_constrained_random['S2 Q_org [L/time]']>0) & (df_constrained_random['S2 Q_org [L/time]']<1))]
+                                   & ~((df_constrained_random['S2 Q_org [L/time]']>0) 
+                                       & (df_constrained_random['S2 Q_org [L/time]']<1))]
 print('Dropped rows with invalid Q_org values:')
 print(dropped_rows[['S2 K_eq_Pt', 'S2 q_max_Pt', 'S2 K_eq_Pd', 'S2 q_max_Pd', 'S2 K_eq_Rh', 'S2 q_max_Rh']])
 # in df_random_filtered, i want to drop the rows containing any of the combos of K_eq and q_max values that are in the dropped_rows, since those combos seem to lead to invalid results
@@ -183,6 +184,18 @@ for index, row in dropped_rows.iterrows():
                                             (df_random_filtered['S2 q_max_Pd']==q_max_Pd) & 
                                             (df_random_filtered['S2 K_eq_Rh']==K_eq_Rh) & 
                                             (df_random_filtered['S2 q_max_Rh']==q_max_Rh))]
+    K_eq_Pt=row['S1 K_eq_Pt']
+    q_max_Pt=row['S1 q_max_Pt']
+    K_eq_Pd=row['S1 K_eq_Pd']
+    q_max_Pd=row['S1 q_max_Pd']
+    K_eq_Rh=row['S1 K_eq_Rh']
+    q_max_Rh=row['S1 q_max_Rh']
+    df_random_filtered=df_random_filtered[~((df_random_filtered['S1 K_eq_Pt']==K_eq_Pt) & 
+                                            (df_random_filtered['S1 q_max_Pt']==q_max_Pt) & 
+                                            (df_random_filtered['S1 K_eq_Pd']==K_eq_Pd) & 
+                                            (df_random_filtered['S1 q_max_Pd']==q_max_Pd) & 
+                                            (df_random_filtered['S1 K_eq_Rh']==K_eq_Rh) & 
+                                            (df_random_filtered['S1 q_max_Rh']==q_max_Rh))]
 for S1_stages, group in df_random_filtered.groupby('S1 Stages'):
     # print('S1 Stages:', S1_stages)
     group.reset_index(drop=True, inplace=True)
