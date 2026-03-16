@@ -3,10 +3,10 @@ from helper_functions import *
 
 
 # Load the entire Excel file
-all_sheets = pd.read_excel('unary_isothern_extraction_data_automation.xlsx', sheet_name=None)
+all_sheets = pd.read_excel('unary_isotherm_extraction_data_automation.xlsx', sheet_name=None)
 confidence_level=0.95
 
-with pd.ExcelFile('unary_isothern_extraction_data_automation.xlsx') as xlsx:
+with pd.ExcelFile('unary_isotherm_extraction_data_automation.xlsx') as xlsx:
     # Get list of all sheet names
     names = xlsx.sheet_names
     # print(f"Sheets found: {names}")
