@@ -7,4 +7,4 @@ The uncertainty_propagation_entire_Pt_Pd_Rh_system.py file is used to generate t
 Pt_Pd_Rh_S1_S2_data_cleaning_and_plotting.py is used to clean the Mante Carlo data, removing random parameter cases that generate physically unmeaningful results.
 plot_uncertainty_Pt_Pd_Rh_system_S1_S2.py is used to generate the uncertainty figure where S1 stages vary on the x-axis.
 run_countercurrent_simulations.py contains the code used to generate the countercurrent stage concentration profile plot.
-
+3D_Competitive_Langmuir_Plots.ipynb is used to generate the competitive Langmuir isotherm contour plots for a binary system
