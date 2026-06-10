@@ -154,7 +154,8 @@ print(result)
 result.to_csv('countercurrent_constrained_purity_analysis_results_'+str(total_conc_ppm_mass)+'_ppm_'+str(PGM_labels)+'_PGMs_'+str(desired_purity_Rh)+'_percent_purity_Rh_'+str(ligand)+'_ligand.csv', index=False)
 # df.plot(linestyle='--',marker='v')
 
-#   use the previous solution as the new guess, but scaled down by 10% to hopefully ensure that we approach the solution from the same direction each time and thus get a more monotonic relationship between number of stages and required organic flow rate
+#   use the previous solution as the new guess, but scaled down by 10% to hopefully ensure that we approach the solution 
+#   from the same direction each time and thus get a more monotonic relationship between number of stages and required organic flow rate
 #   C_arr, q_arr = crosscurrent_model_fsolve(C_in, q_in, C_lig, Q_aq, Q_org_det, n_stages,q_max_arr,K_Eq_arr)
 #   recov_aq_arr=compute_recov_aq_arr(C_arr,n_stages)
 #   Rh_recov=recov_aq_arr[-1,2]

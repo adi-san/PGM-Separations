@@ -125,8 +125,6 @@ for index, row in non_random_S1.iterrows():
     combined_df=pd.concat([df_S1_for_concat.reset_index(drop=True), non_random_S2.reset_index(drop=True)], axis=1)
     # combined_df=pd.concat([non_random_S1.loc[index].to_frame().T.reset_index(drop=True), non_random_S2.reset_index(drop=True)], axis=1)
     non_random_df_list.append(combined_df)
-    # print('Combined DF for index '+str(index)+':')
-    # print(combined_df)
 end=datetime.now()
 print('Time taken for non-random case: '+str(end-start))
 # concatenate the dfs

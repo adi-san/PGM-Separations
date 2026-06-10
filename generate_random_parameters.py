@@ -24,7 +24,6 @@ print(random_params_array)
 new_column_names=[]
 for i in range(num_samples):
     new_column_names.append('Random Sample '+str(i+1))
-# print(new_column_names)
 df_rand=pd.DataFrame(random_params_array, columns=new_column_names)
 df_combined=pd.concat([df, df_rand], axis=1)
 print(df_combined)
