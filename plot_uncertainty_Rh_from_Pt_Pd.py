@@ -143,3 +143,18 @@ plt.title('Recovery at '+str(desired_purity_Rh)+'% Purity Rh and Organic Flow Vs
 plt.tight_layout()
 plt.show()
 
+# create dataframe of the stage numbers, max recoveries, and organic flow rates, and save to csv
+df_uncertainty = pd.DataFrame({
+    'Stage Number': stage_list,
+    'Min Recovery (%)': min_recovery_list,
+    'Max Recovery (%)': max_recovery_list,
+    'Low Quartile Recovery (%)': low_quartile_recovery_list,
+    'Upper Quartile Recovery (%)': up_quartile_recovery_list,
+    'Recovery at '+str(desired_purity_Rh)+'% Purity Rh (%)': max_recov_list,
+    'Min Organic Flow Rate (L/time)': min_flow_list,
+    'Max Organic Flow Rate (L/time)': max_flow_list,
+    'Low Quartile Organic Flow Rate (L/time)': low_quartile_org_flow_list,
+    'Upper Quartile Organic Flow Rate (L/time)': up_quartile_org_flow_list,
+    'Organic Flow Rate (L/time)': vol_flow_list
+})
+df_uncertainty.to_csv('uncertainty_analysis_IQR_results_ddFc_Ligand.csv', index=False)

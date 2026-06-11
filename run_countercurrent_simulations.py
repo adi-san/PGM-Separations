@@ -1,6 +1,5 @@
 from helper_functions import *
 
-
 col_labels = ['Pt', 'Pd', 'Rh']
 
 q_in=np.array([0,0,0])
@@ -10,12 +9,15 @@ q_in=np.array([0,0,0])
 # MW_arr=np.array([195.084,106.42,102.91])
 C_in=np.array([0.00154143585092054,0.00154143585092054,0.000342541300204565])
 # C_in=np.array([0.00126794946836896,0.00130264452745589,0.0000218541914793087])
-n_stages=12
+n_stages=6
 Q_aq=1 # L/time
 # Q_aq=0.773024571196713 # L/time
 C_lig=0.1 #mols of ligand/L solution
-Q_org=0.109523223099414 # L/time
+# Below one should enter the organic flowrate that would achieve a 95% recovery of Rh in the aqueous exit for the countercurrent model 
+# (can be found in stream results), 
+# this is how I generate the plot for the 6 stage case
 
+Q_org=0.113958612171052 # L/time
 eps=1e-11
 
 q_max_arr = np.array([0.283184293825222,0.56945642916197,0.00376986289722275]) #mol PGM/mol ddFc
@@ -60,6 +62,12 @@ plt.title('Countercurrent Conc Vs Stages')
 plt.xlabel("Stage Number")
 plt.ylabel("Conc Profile [M]")
 plt.show()
+
+# Write the countercurrent concentrations to a CSV file
+countercurrent_conc_df = pd.DataFrame(C_counter_plot, columns=col_labels)
+countercurrent_conc_df = countercurrent_conc_df.rename_axis('Stage Index')
+countercurrent_conc_df.to_csv('countercurrent_concentrations_in_molarity_ddFc_'+str(n_stages)+'stages.csv', index=True)
+
 
 resid=countercurrent_model(C_countercurrent_concs, C_lig, Q_aq, Q_org,n_stages, q_in,C_in,q_max_arr,K_Eq_arr)
 print("L2 Norm of Residual", (np.linalg.norm(resid, ord=np.inf))**1)
