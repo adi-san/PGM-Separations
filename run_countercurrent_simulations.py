@@ -2,7 +2,7 @@ from helper_functions import *
 
 col_labels = ['Pt', 'Pd', 'Rh']
 
-q_in=np.array([0,0,0])
+q_in=np.array([0.01,0.01,0.0001])
 
 # total_conc_ppm_mass=500 # mg/L
 # rel_mol_frac_arr=np.array([.45, .45, .1]) #Pt, Pd, Rh

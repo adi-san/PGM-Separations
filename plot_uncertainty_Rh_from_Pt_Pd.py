@@ -92,9 +92,9 @@ ax1.tick_params(axis='y', labelcolor='tab:blue')
 
   # Purity (right y-axis)
 ax2 = ax1.twinx()
-ax2.plot(n_stages_arr, vol_flow_arr, linestyle='--', marker='v',color='tab:red', label='Organic Flowrate')
+ax2.plot(n_stages_arr, 100*vol_flow_arr, linestyle='--', marker='v',color='tab:red', label='Organic Flowrate')
 # ax2.plot(test_flowrates, np.ones(len(test_flowrates))*95, color='tab:red',linestyle='--', label='Purity Threshold')
-ax2.set_ylabel('Vol Flow Solution (L/time)', color='tab:red')
+ax2.set_ylabel('Vol Flow Solution (L/min)', color='tab:red')
 ax2.tick_params(axis='y', labelcolor='tab:red')
 
   # Optional: combined legend
@@ -108,10 +108,10 @@ for i in range(len(stage_list)):
     low_quartile_recovery=low_quartile_recovery_list[i]
     up_quartile_recovery=up_quartile_recovery_list[i]
 
-    min_flow=min_flow_list[i]
-    max_flow=max_flow_list[i]
-    low_quartile_flow=low_quartile_org_flow_list[i]
-    up_quartile_flow=up_quartile_org_flow_list[i]
+    min_flow=min_flow_list[i]*100
+    max_flow=max_flow_list[i]*100
+    low_quartile_flow=low_quartile_org_flow_list[i]*100
+    up_quartile_flow=up_quartile_org_flow_list[i]*100
 
     # plot vertical line for recovery range
     ax1.vlines(x=stages, ymin=min_recovery, ymax=max_recovery, color='tab:blue', alpha=0.5)
