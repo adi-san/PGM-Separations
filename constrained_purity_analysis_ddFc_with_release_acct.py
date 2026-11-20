@@ -12,7 +12,7 @@ K_Eq_arr = np.array([1822.21079088769,2662.60590731049, 2401.50309384427]) # tru
 # K_Eq_arr = np.array([285.1951444,2169.894489,866.4940906]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #coeFc
 # K_Eq_arr = np.array([349.540848,950.3304042, 368.9954269]) # truly dimensionless parameters, I may need to scale these by powers of 10 if convergence proves to be tricky #deFc
 
-
+# will need to make this something we solve for
 q_in=np.array([0,0,0])
 
 total_conc_ppm_mass=500 # mg/L
@@ -31,3 +31,30 @@ n_stages_arr=np.linspace(starting_stage,highest_stage,highest_stage-starting_sta
 
 # specify this
 desired_purity_Rh=95 # in percent, so 95 means 95% purity of Rh in the aqueous phase
+
+# main change here is that we account for release effienccy of ligand and purge fraction
+release_efficiency=0.4
+purge_fraction=0.02
+
+
+n_stages_int_list=[]
+max_recov_list=[]
+vol_flow_list=[]
+C_out_list=[]
+q_out_list=[]
+max_sales_Rh_list=[]
+
+price_arr=np.array([33730.32258,32929.67742, 164946.129])/1000*MW_arr # $/kg PGM --> $/mol PGM, Source, Johnson Matthey
+# assume that these prices only apply in a particular stream rich with a component
+
+Q_org_ig=.3
+
+# for n_stages_float in n_stages_arr:
+#     n_stages_int=int(n_stages_float)
+#     n_stages_int_list.append(n_stages_int)
+#     C_out,q_out,max_recov,vol_flow,max_sales_Rh=constrained_purity_analysis_ddFc_with_release_acct(C_in,C_lig,Q_aq,n_stages_int,PGM_labels,q_max_arr,K_Eq_arr,desired_purity_Rh,release_efficiency,purge_fraction,price_arr,Q_org_ig)
+#     max_recov_list.append(max_recov)
+#     vol_flow_list.append(vol_flow)
+#     C_out_list.append(C_out)
+#     q_out_list.append(q_out)
+#     max_sales_Rh_list.append(max_sales_Rh)
