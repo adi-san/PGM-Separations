@@ -299,3 +299,104 @@ def run_constrained_purity_analysis_countercurrent(C_in,
   # result=result[['Stages']+Conc_in_labels+q_in_labels+Conc_out_labels+q
   # print(result)
   return result
+
+# ---------------------------------------------------------------------------
+# Countercurrent model with incomplete ligand release and aqueous purge (recycle loop)
+# ---------------------------------------------------------------------------
+def recycle_q_in_factor(release_efficiency: float, purge_fraction: float):
+  # q_in = (1-purge_fraction)*(1-release_efficiency)*q_out  (q_out = loading of organic leaving stage 1)
+  return (1-purge_fraction)*(1-release_efficiency)
+
+def countercurrent_with_recycle_resid(x: ndarray, C_lig: float, Q_aq: float, Q_org: float, n_stages: int,
+                                      C_in: ndarray, q_max: ndarray, K_eq: ndarray, recycle_factor: float):
+  # x = [C_stage1, ..., C_stage_n (n_stages*n_comps entries), q_in (n_comps entries)]
+  n_comps=len(C_in)
+  C_stages=x[:n_stages*n_comps]
+  q_in=x[n_stages*n_comps:]
+  resid_stages=countercurrent_model(C_stages, C_lig, Q_aq, Q_org, n_stages, q_in, C_in, q_max, K_eq)
+  q_out=q_func_langmuir_relation(q_max, K_eq, C_stages[:n_comps])
+  # recycle closure, scaled the same way as the Rh stage equations
+  resid_recycle=(q_in-recycle_factor*q_out)/q_max[-1]
+  return np.concatenate([resid_stages, resid_recycle])
+
+def solve_countercurrent_with_recycle(Q_org, C_lig, Q_aq, n_stages, C_in, q_max, K_eq,
+                                      release_efficiency, purge_fraction, guess=None, tol=1e-9):
+  """Solves the stage concentrations AND the recycled ligand loading q_in simultaneously.
+  Returns (C_mat [n_stages x n_comps], q_in [n_comps], l2 norm of residual)."""
+  n_comps=len(C_in)
+  rf=recycle_q_in_factor(release_efficiency, purge_fraction)
+  n_unk=n_stages*n_comps+n_comps
+  bounds=(np.zeros(n_unk), np.ones(n_unk)*np.inf)
+  guesses=[]
+  if guess is not None:
+    guesses.append(guess)
+  guesses.append(np.concatenate([np.tile(C_in,n_stages), np.zeros(n_comps)]))
+  guesses.append(np.concatenate([np.tile(C_in*0.5,n_stages), 0.5*q_max*rf]))
+  guesses.append(np.concatenate([np.tile(C_in*0.1,n_stages), 0.1*q_max*rf]))
+  best=None
+  for g in guesses:
+    sol=least_squares(countercurrent_with_recycle_resid, g, args=(C_lig,Q_aq,Q_org,n_stages,C_in,q_max,K_eq,rf),
+                      ftol=1e-12, gtol=1e-12, xtol=1e-12, bounds=bounds, method='trf')
+    nrm=np.linalg.norm(sol.fun)
+    if best is None or nrm<best[1]:
+      best=(sol.x,nrm)
+    if nrm<tol:
+      break
+  x,nrm=best
+  return x[:n_stages*n_comps].reshape(n_stages,n_comps), x[n_stages*n_comps:], nrm, x
+
+def constrained_purity_analysis_ddFc_with_release_acct(C_in, C_lig, Q_aq, n_stages, PGM_labels, q_max_arr, K_Eq_arr,
+                                                       desired_purity_Rh, release_efficiency, purge_fraction,
+                                                       price_arr, Q_org_ig=0.3, Q_org_min=0.02, Q_org_max=20, n_grid=40):
+  """Finds the smallest organic flowrate that gives the desired Rh purity (%) in the aqueous exit when the
+  organic phase is recycled with incomplete release and a purge. The recycled loading q_in is solved for, not specified.
+
+  Purity is not monotone in Q_org and may never reach the target (the recycled q_in puts a floor on how clean the
+  aqueous phase can get), so Q_org is found by scanning a log grid and refining the first crossing with brentq.
+  Q_org_ig only orders the grid (it is kept for call compatibility with the previous scripts).
+
+  Returns C_out, q_out, max_recov, vol_flow, max_sales_Rh, details (dict).
+  If the target is unreachable, feasible=False and the Q_org with the highest purity on the grid is returned."""
+  from scipy.optimize import brentq
+  n_comps=len(C_in)
+  state={'guess':None}
+  def purity_at(Q_org):
+    C_mat,q_in,nrm,x=solve_countercurrent_with_recycle(Q_org,C_lig,Q_aq,n_stages,C_in,q_max_arr,K_Eq_arr,
+                                                       release_efficiency,purge_fraction,guess=state['guess'])
+    if nrm<1e-7:
+      state['guess']=x
+    return compute_Rh_purity_aq(C_mat), nrm
+
+  Q_grid=np.logspace(np.log10(Q_org_min),np.log10(Q_org_max),n_grid)
+  purities=[]
+  for Q in Q_grid:
+    p,nrm=purity_at(Q)
+    purities.append(p if nrm<1e-7 else np.nan)
+  purities=np.array(purities)
+  crossing=np.where(purities>=desired_purity_Rh)[0]
+  feasible=len(crossing)>0
+  if feasible:
+    k=crossing[0]
+    if k==0:
+      Q_org_det=Q_grid[0]
+    else:
+      Q_org_det=brentq(lambda Q: purity_at(Q)[0]-desired_purity_Rh, Q_grid[k-1], Q_grid[k], xtol=1e-10, rtol=1e-10)
+  else:
+    Q_org_det=Q_grid[np.nanargmax(purities)]
+  C_mat,q_in,nrm,x=solve_countercurrent_with_recycle(Q_org_det,C_lig,Q_aq,n_stages,C_in,q_max_arr,K_Eq_arr,
+                                                     release_efficiency,purge_fraction,guess=state['guess'])
+  if nrm>1e-7:
+    print(f'Warning: n_stages={n_stages}, Q_org={Q_org_det}: residual norm {nrm:.2e} (may not have converged).')
+  C_out=C_mat[-1,:]
+  q_out=q_func_langmuir_relation(q_max_arr, K_Eq_arr, C_mat[0,:])
+  max_recov=C_out[-1]/C_in[-1]*100
+  max_sales_Rh=price_arr[-1]*C_out[-1] # $Rh/L feed
+  purity=compute_Rh_purity_aq(C_mat)
+  # overall balance with the recycle: feed = aqueous exit + (released + purged) PGM leaving the loop
+  rf=recycle_q_in_factor(release_efficiency,purge_fraction)
+  removed=Q_org_det*C_lig*(1-rf)*q_out
+  mat_bal=Q_aq*C_in-Q_aq*C_out-removed
+  details={'feasible':feasible,'purity':purity,'max_purity_on_grid':np.nanmax(purities),
+           'C_stages':C_mat,'q_in':q_in,'q_out':q_out,'residual_norm':nrm,'removed_by_release_and_purge':removed,
+           'overall_mat_bal':mat_bal,'Q_grid':Q_grid,'purity_grid':purities}
+  return C_out, q_out, max_recov, Q_org_det, max_sales_Rh, details
